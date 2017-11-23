@@ -1,0 +1,53 @@
+// myDb.get("funs").then(function(result) {
+//   console.log(result);
+// });
+
+// myDb
+//     .post("funs", { title: "hahahahha", url: "cccccc" })
+//     .then(function(result) {
+//         return result;
+//         // {
+//         //     "fieldCount": 0,
+//         //     "affectedRows": 1,
+//         //     "insertId": 4,
+//         //     "serverStatus": 2,
+//         //     "warningCount": 0,
+//         //     "message": "",
+//         //     "protocol41": true,
+//         //     "changedRows": 0
+//         // }
+//     });
+
+// myDb
+//     .put("funs", {id:3, title: "33333", url: "33333" ,content:'test'})
+//     .then(function(result) {
+//         return result;
+//         // {
+//         //     "fieldCount": 0,
+//         //     "affectedRows": 1,
+//         //     "insertId": 0,
+//         //     "serverStatus": 2,
+//         //     "warningCount": 0,
+//         //     "message": "(Rows matched: 1  Changed: 1  Warnings: 0",
+//         //     "protocol41": true,
+//         //     "changedRows": 1
+//         // }
+//     });
+//
+
+// ctx.body = await myDb
+//   .delete("funs", {id:3})
+//   .then(function(result) {
+//     return result;
+//       // {
+//       //     "fieldCount": 0,
+//       //     "affectedRows": 1,
+//       //     "insertId": 0,
+//       //     "serverStatus": 2,
+//       //     "warningCount": 0,
+//       //     "message": "",
+//       //     "protocol41": true,
+//       //     "changedRows": 0
+//       // }
+//   });
+//return;
