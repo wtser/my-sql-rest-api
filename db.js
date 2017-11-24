@@ -1,65 +1,11 @@
-// myDb.get("funs").then(function(result) {
-//   console.log(result);
-// });
-
-// myDb
-//     .post("funs", { title: "hahahahha", url: "cccccc" })
-//     .then(function(result) {
-//         return result;
-//         // {
-//         //     "fieldCount": 0,
-//         //     "affectedRows": 1,
-//         //     "insertId": 4,
-//         //     "serverStatus": 2,
-//         //     "warningCount": 0,
-//         //     "message": "",
-//         //     "protocol41": true,
-//         //     "changedRows": 0
-//         // }
-//     });
-
-// myDb
-//     .put("funs", {id:3, title: "33333", url: "33333" ,content:'test'})
-//     .then(function(result) {
-//         return result;
-//         // {
-//         //     "fieldCount": 0,
-//         //     "affectedRows": 1,
-//         //     "insertId": 0,
-//         //     "serverStatus": 2,
-//         //     "warningCount": 0,
-//         //     "message": "(Rows matched: 1  Changed: 1  Warnings: 0",
-//         //     "protocol41": true,
-//         //     "changedRows": 1
-//         // }
-//     });
-//
-
-// ctx.body = await myDb
-//   .delete("funs", {id:3})
-//   .then(function(result) {
-//     return result;
-//       // {
-//       //     "fieldCount": 0,
-//       //     "affectedRows": 1,
-//       //     "insertId": 0,
-//       //     "serverStatus": 2,
-//       //     "warningCount": 0,
-//       //     "message": "",
-//       //     "protocol41": true,
-//       //     "changedRows": 0
-//       // }
-//   });
-//return;
-
-var mysql = require('mysql');
+var mysql = require("mysql");
 module.exports = (function() {
   var mysqldb = function(conf) {
     this.conf = conf || {
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'fun.wtser.com',
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "fun.wtser.com"
     };
   };
   mysqldb.prototype.connect = function() {
@@ -72,47 +18,70 @@ module.exports = (function() {
     var that = this;
     return new Promise(function(resolve, reject) {
       var connection = that.connect();
-      var sqlQuery = 'SELECT * FROM ' + tableName;
+      var sqlQuery = "SELECT * FROM `" + tableName + "`";
       if (queryVar.where) {
-        if (typeof queryVar.where === 'string') {
+        // 反序列化 JSON 字符串
+        if (typeof queryVar.where === "string") {
           queryVar.where = JSON.parse(queryVar.where);
         }
-        var whereWhat = Object.keys(queryVar.where)[0];
-        switch (whereWhat) {
-          case '$like':
-            console.log('likelike');
-            var whereObj = queryVar.where[whereWhat];
-            var whereWhatObj = Object.keys(whereObj)[0];
-            var whereValueObj = whereObj[whereWhatObj];
-            sqlQuery +=
-              ' WHERE `' +
-              whereWhatObj +
-              '` LIKE ' +
-              mysql.escape('%' + whereValueObj);
-            console.log(sqlQuery);
-            break;
+        let whereStrArr = Object.keys(queryVar.where).map(whereKey => {
+          var whereObj = queryVar.where[whereKey];
+          var whereObjKey = Object.keys(whereObj)[0];
+          var whereObjValue = whereObj[whereObjKey];
+          let whereGen = condition =>
+            " `" +
+            whereObjKey +
+            "` " +
+            condition +
+            " " +
+            mysql.escape(whereObjValue);
+          switch (whereKey) {
+            case "$gt":
+              //    大于
+              return whereGen(">");
+              break;
+            case "$gte":
+              //    大于等于
+              return whereGen(">+");
+              break;
+            case "$$lt":
+              //    小于
+              return whereGen("<");
+              break;
+            case "$$lte":
+              //    小于等于
+              return whereGen("<=");
+              break;
+            case "$ne":
+              //    不等于
+              return whereGen("!=");
+              break;
+            case "$like":
+              return whereGen("LIKE");
+              break;
 
-          default:
-            sqlQuery +=
-              ' WHERE `' +
-              whereWhat +
-              '`=' +
-              mysql.escape(queryVar.where[whereWhat]);
-        }
+            default:
+              return whereGen("=");
+          }
+          console.log(whereSql);
+          return whereSql;
+        });
+        sqlQuery += " WHERE " + whereStrArr.join(" AND ");
       }
 
       if (queryVar.order) {
         sqlQuery +=
-          ' ORDER BY ' + queryVar.orderBy + ' ' + queryVar.order.toUpperCase();
+          " ORDER BY " + queryVar.orderBy + " " + queryVar.order.toUpperCase();
       }
       if (queryVar.limit) {
         sqlQuery +=
-          ' LIMIT ' +
+          " LIMIT " +
           queryVar.limit * (queryVar.page - 1) +
-          ',' +
+          "," +
           queryVar.limit;
       }
 
+      console.log(sqlQuery);
       connection.query(sqlQuery, function(error, results, fields) {
         connection.end();
         if (error) {
@@ -130,7 +99,7 @@ module.exports = (function() {
     var that = this;
     return new Promise(function(resolve, reject) {
       var connection = that.connect();
-      var sqlQuery = 'INSERT INTO ' + tableName + ' SET ?';
+      var sqlQuery = "INSERT INTO `" + tableName + "` SET ?";
       connection.query(sqlQuery, obj, function(error, results, fields) {
         connection.end();
         if (error) {
@@ -151,7 +120,7 @@ module.exports = (function() {
     var that = this;
     return new Promise(function(resolve, reject) {
       var connection = that.connect();
-      var sqlQuery = 'UPDATE ' + tableName + ' SET ? WHERE id=' + Id;
+      var sqlQuery = "UPDATE `" + tableName + "` SET ? WHERE id=" + Id;
       connection.query(sqlQuery, obj, function(error, results, fields) {
         connection.end();
         if (error) {
@@ -167,7 +136,7 @@ module.exports = (function() {
     var that = this;
     return new Promise(function(resolve, reject) {
       var connection = that.connect();
-      var sqlQuery = 'DELETE FROM ' + tableName + ' WHERE id=' + obj.id;
+      var sqlQuery = "DELETE FROM `" + tableName + "` WHERE id=" + obj.id;
       connection.query(sqlQuery, function(error, results, fields) {
         connection.end();
         if (error) {
