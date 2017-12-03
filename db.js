@@ -61,6 +61,8 @@ module.exports = (function() {
               break;
 
             default:
+              whereObjKey = whereKey;
+              whereObjValue = whereObj;
               return whereGen("=");
           }
           console.log(whereSql);
