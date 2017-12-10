@@ -96,8 +96,6 @@ module.exports = (function() {
   };
   // create
   mysqldb.prototype.post = function(tableName, obj) {
-    obj.createdAt = obj.updatedAt = Date.now();
-
     var that = this;
     return new Promise(function(resolve, reject) {
       var connection = that.connect();
@@ -115,7 +113,6 @@ module.exports = (function() {
 
   // update
   mysqldb.prototype.put = function(tableName, obj) {
-    obj.updatedAt = Date.now();
     var Id = obj.id;
     delete obj.id;
 
