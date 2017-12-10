@@ -42,13 +42,13 @@ module.exports = (function() {
               break;
             case "$gte":
               //    大于等于
-              return whereGen(">+");
+              return whereGen(">=");
               break;
-            case "$$lt":
+            case "$lt":
               //    小于
               return whereGen("<");
               break;
-            case "$$lte":
+            case "$lte":
               //    小于等于
               return whereGen("<=");
               break;
