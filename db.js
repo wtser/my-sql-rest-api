@@ -28,13 +28,20 @@ module.exports = (function() {
           var whereObj = queryVar.where[whereKey];
           var whereObjKey = Object.keys(whereObj)[0];
           var whereObjValue = whereObj[whereObjKey];
-          let whereGen = condition =>
-            " `" +
-            whereObjKey +
-            "` " +
-            condition +
-            " " +
-            mysql.escape(whereObjValue);
+          let whereGen = condition => {
+            if (condition === "LIKE") {
+              whereObjValue = "%" + whereObjValue + "%";
+            }
+            return (
+              " `" +
+              whereObjKey +
+              "` " +
+              condition +
+              " " +
+              mysql.escape(whereObjValue)
+            );
+          };
+
           switch (whereKey) {
             case "$gt":
               //    大于
